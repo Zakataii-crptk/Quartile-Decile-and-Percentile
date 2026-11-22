@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quartile, Decile and Percentile M.6</title>
+
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [["\\(", "\\)"]]
+    },
+    svg: {
+        fontCache: "global"
+    }
+};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #eef3fa;
+    color: #222;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+h1, h2, h3 {
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 8px;
+    color: #2457a6;
+}
+
+h3 {
+    margin-top: 0;
+    color: #555;
+}
+
+input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2d6cdf;
+    box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.15);
+}
+
+button {
+    padding: 14px 24px;
+    font-size: 16px;
+    color: #ffffff;
+    cursor: pointer;
+    background: #2d6cdf;
+    border: none;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #1f56bd;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    background: #8a8a8a;
+}
+
+#examPage {
+    display: none;
+}
+
+.question-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    margin-top: 25px;
+    padding: 35px 25px;
+    overflow-x: auto;
+    font-size: 21px;
+    line-height: 1.9;
+    text-align: center;
+    background: #fafcff;
+    border: 2px solid #d7e1f1;
+    border-radius: 12px;
+}
+
+.question-content {
+    width: 100%;
+    max-width: 760px;
+}
+
+.question-content p {
+    margin: 10px 0;
+}
+
+.data-table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-size: 19px;
+}
+
+.data-table th,
+.data-table td {
+    min-width: 70px;
+    padding: 8px 14px;
+    text-align: center;
+    border: 1px solid #7a8fa8;
+}
+
+.data-table th {
+    color: #ffffff;
+    background: #2457a6;
+}
+
+.stem-leaf-table {
+    margin: 20px auto 10px;
+    border-collapse: collapse;
+    font-size: 20px;
+}
+
+.stem-leaf-table th,
+.stem-leaf-table td {
+    padding: 7px 20px;
+    border: 1px solid #7a8fa8;
+}
+
+.stem-leaf-table th {
+    color: #ffffff;
+    background: #2457a6;
+}
+
+.stem-leaf-table td {
+    text-align: left;
+}
+
+.stem-leaf-table td:first-child {
+    text-align: center;
+}
+
+.key-box {
+    margin: 12px 0;
+    font-size: 17px;
+}
+
+.instruction-box {
+    width: 100%;
+    max-width: 650px;
+    font-size: 17px;
+    line-height: 1.8;
+    text-align: left;
+}
+
+.instruction-box h3 {
+    margin: 0 0 10px;
+    color: #2457a6;
+    text-align: center;
+}
+
+.instruction-box ul {
+    margin: 0;
+    padding-left: 25px;
+}
+
+.center {
+    margin-top: 22px;
+    text-align: center;
+}
+
+.terminated {
+    max-width: 700px;
+    margin: 100px auto;
+    padding: 30px;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 600px) {
+    .container {
+        margin: 15px;
+        padding: 20px;
+    }
+
+    .question-box {
+        padding: 25px 15px;
+        font-size: 18px;
+    }
+
+    .instruction-box {
+        font-size: 16px;
+    }
+
+    .data-table,
+    .stem-leaf-table {
+        font-size: 16px;
+    }
+
+    .data-table th,
+    .data-table td {
+        min-width: 55px;
+        padding: 7px 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div id="loginPage">
+        <h1>Quartile, Decile and  Percentile</h1>
+        <h3>คณิตศาสตร์ ม.6</h3>
+
+        <input id="name" type="text" placeholder="ชื่อ - นามสกุล">
+        <input id="number" type="text" placeholder="เลขที่ / รหัสนักเรียน">
+
+        <div class="center">
+            <button onclick="startExam()">เริ่มทำแบบฝึกหัด</button>
+        </div>
+    </div>
+
+    <div id="examPage">
+        <h2>Quartile, Decile and  Percentile</h2>
+
+        <p><b>ชื่อ:</b> <span id="studentName"></span></p>
+        <p><b>เลขที่:</b> <span id="studentNumber"></span></p>
+        <p><b>ข้อที่:</b> <span id="count">0</span> / 2</p>
+
+        <div id="questionBox" class="question-box"></div>
+
+        <div class="center">
+            <button id="nextButton" onclick="generateQuestion()">
+                เริ่มแสดงโจทย์ข้อที่ 1
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let count = 0;
+let examStarted = false;
+let questionSet = [];
+
+/* สุ่มตำแหน่งข้อมูล */
+function randomIndex(max) {
+    const values = new Uint32Array(1);
+
+    if (window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(values);
+        return values[0] % max;
+    }
+
+    return Math.floor(Math.random() * max);
+}
+
+/* สุ่มจำนวนเต็มตั้งแต่ min ถึง max */
+function randomInt(min, max) {
+    return min + randomIndex(max - min + 1);
+}
+
+/* สลับลำดับข้อมูล */
+function shuffle(items) {
+    const result = [...items];
+
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = randomIndex(i + 1);
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+
+    return result;
+}
+
+/*
+    สุ่มจำนวนข้อมูลทั้งหมด n
+    กำหนดให้ตำแหน่ง Q, D และ P สามารถเป็นทศนิยม
+    และไม่เกิน 2 ตำแหน่ง
+*/
+function createTotalCount() {
+    const possibleCounts = [];
+
+    for (let total = 15; total <= 35; total++) {
+        const nPlusOne = total + 1;
+
+        /*
+            หลีกเลี่ยงกรณีที่ Q ทุกตัวเป็นจำนวนเต็ม
+            กล่าวคือ n + 1 หารด้วย 4 ลงตัว
+        */
+        if (nPlusOne % 4 === 0) {
+            continue;
+        }
+
+        /*
+            หลีกเลี่ยงกรณีที่ D ทุกตัวเป็นจำนวนเต็ม
+            กล่าวคือ n + 1 หารด้วย 10 ลงตัว
+        */
+        if (nPlusOne % 10 === 0) {
+            continue;
+        }
+
+        possibleCounts.push(total);
+    }
+
+    return possibleCounts[randomIndex(possibleCounts.length)];
+}
+
+/*
+    ตรวจสอบตำแหน่งว่าเป็นจำนวนจริงแบบทศนิยม
+    และไม่เป็นจำนวนเต็ม
+*/
+function isNonIntegerPosition(numerator, denominator) {
+    return numerator % denominator !== 0;
+}
+
+/*
+    สุ่ม Q, D และ P
+    ให้ตำแหน่งทั้งสามค่าเป็นจำนวนจริงที่ไม่เป็นจำนวนเต็ม
+*/
+function createTargetValues(totalCount) {
+    const nPlusOne = totalCount + 1;
+
+    const quartileChoices = [];
+    const decileChoices = [];
+    const percentileChoices = [];
+
+    for (let quartile = 1; quartile <= 3; quartile++) {
+        if (isNonIntegerPosition(quartile * nPlusOne, 4)) {
+            quartileChoices.push(quartile);
+        }
+    }
+
+    for (let decile = 1; decile <= 9; decile++) {
+        if (isNonIntegerPosition(decile * nPlusOne, 10)) {
+            decileChoices.push(decile);
+        }
+    }
+
+    for (let percentile = 1; percentile <= 99; percentile++) {
+        if (isNonIntegerPosition(percentile * nPlusOne, 100)) {
+            percentileChoices.push(percentile);
+        }
+    }
+
+    return {
+        quartile: quartileChoices[
+            randomIndex(quartileChoices.length)
+        ],
+        decile: decileChoices[
+            randomIndex(decileChoices.length)
+        ],
+        percentile: percentileChoices[
+            randomIndex(percentileChoices.length)
+        ]
+    };
+}
+
+/* สร้างข้อมูลจำนวนเต็มไม่ซ้ำกันตามจำนวนที่กำหนด */
+function createRawData(totalCount) {
+    const values = new Set();
+
+    while (values.size < totalCount) {
+        values.add(randomInt(10, 99));
+    }
+
+    return [...values].sort(function(a, b) {
+        return a - b;
+    });
+}
+
+/* แปลงข้อมูลเป็นแผนภาพต้น-ใบ */
+function createStemLeafTable(data) {
+    const groups = {};
+
+    for (const value of data) {
+        const stem = Math.floor(value / 10);
+        const leaf = value % 10;
+
+        if (!groups[stem]) {
+            groups[stem] = [];
+        }
+
+        groups[stem].push(leaf);
+    }
+
+    const stems = Object.keys(groups)
+        .map(Number)
+        .sort(function(a, b) {
+            return a - b;
+        });
+
+    let rows = "";
+
+    for (const stem of stems) {
+        const leaves = groups[stem]
+            .sort(function(a, b) {
+                return a - b;
+            })
+            .join(" &nbsp; ");
+
+        rows += `
+            <tr>
+                <td>${stem}</td>
+                <td>${leaves}</td>
+            </tr>
+        `;
+    }
+
+    return `
+        <table class="stem-leaf-table">
+            <thead>
+                <tr>
+                    <th>ต้น</th>
+                    <th>ใบ</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+
+        <div class="key-box">
+            <b>กุญแจ:</b> \\(4 \\mid 7\\) หมายถึง \\(47\\)
+        </div>
+    `;
+}
+
+/*
+    สร้างข้อมูลแจกแจงความถี่แบบไม่เป็นอันตรภาคชั้น
+    ค่าข้อมูล x แต่ละค่าไม่ซ้ำกัน
+    ผลรวมของความถี่เท่ากับ totalCount
+*/
+function createFrequencyData(totalCount) {
+    const categoryCount = randomInt(5, 9);
+    const values = new Set();
+
+    while (values.size < categoryCount) {
+        values.add(randomInt(10, 99));
+    }
+
+    const sortedValues = [...values].sort(function(a, b) {
+        return a - b;
+    });
+
+    const frequencies = new Array(categoryCount).fill(1);
+    let remaining = totalCount - categoryCount;
+
+    while (remaining > 0) {
+        const index = randomIndex(categoryCount);
+        frequencies[index]++;
+        remaining--;
+    }
+
+    return {
+        values: sortedValues,
+        frequencies: frequencies
+    };
+}
+
+/* สร้างตารางแจกแจงความถี่ */
+function createFrequencyTable(data) {
+    let valueCells = "";
+    let frequencyCells = "";
+
+    for (let i = 0; i < data.values.length; i++) {
+        valueCells += `<td>${data.values[i]}</td>`;
+        frequencyCells += `<td>${data.frequencies[i]}</td>`;
+    }
+
+    return `
+        <table class="data-table">
+            <tbody>
+                <tr>
+                    <th>ข้อมูล \\(x\\)</th>
+                    ${valueCells}
+                </tr>
+                <tr>
+                    <th>ความถี่ \\(f\\)</th>
+                    ${frequencyCells}
+                </tr>
+            </tbody>
+        </table>
+    `;
+}
+
+/*
+    ข้อ 1: ข้อมูลไม่แจกแจงความถี่
+    นำเสนอด้วยแผนภาพต้น-ใบ
+    จำนวน 250 ข้อ
+*/
+function createStemLeafQuestionBank() {
+    const bank = [];
+    const usedKeys = new Set();
+
+    while (bank.length < 250) {
+        const totalCount = createTotalCount();
+        const data = createRawData(totalCount);
+        const targets = createTargetValues(totalCount);
+
+        const key =
+            totalCount +
+            "|" +
+            data.join(",") +
+            "|" +
+            targets.quartile +
+            "|" +
+            targets.decile +
+            "|" +
+            targets.percentile;
+
+        if (usedKeys.has(key)) {
+            continue;
+        }
+
+        usedKeys.add(key);
+
+        bank.push(`
+            <div class="question-content">
+                <p>กำหนดข้อมูลจากแผนภาพต้น-ใบต่อไปนี้</p>
+
+                ${createStemLeafTable(data)}
+
+                <p>
+                    จงหาค่า
+                    \\(Q_{${targets.quartile}}\\),
+                    \\(D_{${targets.decile}}\\)
+                    และ
+                    \\(P_{${targets.percentile}}\\)
+                </p>
+            </div>
+        `);
+    }
+
+    return bank;
+}
+
+/*
+    ข้อ 2: ข้อมูลแจกแจงความถี่แบบไม่เป็นอันตรภาคชั้น
+    จำนวน 250 ข้อ
+*/
+function createFrequencyQuestionBank() {
+    const bank = [];
+    const usedKeys = new Set();
+
+    while (bank.length < 250) {
+        const totalCount = createTotalCount();
+        const data = createFrequencyData(totalCount);
+        const targets = createTargetValues(totalCount);
+
+        const key =
+            totalCount +
+            "|" +
+            data.values.join(",") +
+            "|" +
+            data.frequencies.join(",") +
+            "|" +
+            targets.quartile +
+            "|" +
+            targets.decile +
+            "|" +
+            targets.percentile;
+
+        if (usedKeys.has(key)) {
+            continue;
+        }
+
+        usedKeys.add(key);
+
+        bank.push(`
+            <div class="question-content">
+                <p>กำหนดตารางแจกแจงความถี่ต่อไปนี้</p>
+
+                ${createFrequencyTable(data)}
+
+                <p>
+                    จงหาค่า
+                    \\(Q_{${targets.quartile}}\\),
+                    \\(D_{${targets.decile}}\\)
+                    และ
+                    \\(P_{${targets.percentile}}\\)
+                </p>
+            </div>
+        `);
+    }
+
+    return bank;
+}
+
+/*
+    คลังโจทย์รวม 500 ข้อ
+    - ข้อ 1 จำนวน 250 ข้อ
+    - ข้อ 2 จำนวน 250 ข้อ
+*/
+const questionBank = {
+    stemLeaf: createStemLeafQuestionBank(),
+    frequency: createFrequencyQuestionBank()
+};
+
+/* สุ่มเลือกโจทย์ */
+function pickRandomQuestion(questionGroup) {
+    return questionGroup[randomIndex(questionGroup.length)];
+}
+
+/* สร้างชุดโจทย์ 2 ข้อ */
+function createRandomQuestionSet() {
+    return [
+        pickRandomQuestion(questionBank.stemLeaf),
+        pickRandomQuestion(questionBank.frequency)
+    ];
+}
+
+/* แสดงคำชี้แจง */
+function showInstructions() {
+    const questionBox = document.getElementById("questionBox");
+
+    questionBox.innerHTML = `
+        <div class="instruction-box">
+            <h3>คำชี้แจง</h3>
+            <ul>
+                <li>แบบฝึกหัดมีทั้งหมด 2 ข้อ</li>
+                <li>ระบบจะแสดงโจทย์ครั้งละ 1 ข้อ</li>
+                <li>เขียนวิธีทำและคำตอบลงในสมุดหรือกระดาษคำตอบ</li>
+                <li>เมื่อพร้อมแล้ว ให้กดปุ่ม “เริ่มแสดงโจทย์ข้อที่ 1”</li>
+            </ul>
+        </div>
+    `;
+
+    typesetQuestion();
+}
+
+/* เริ่มทำแบบฝึกหัด */
+function startExam() {
+    const name = document.getElementById("name").value.trim();
+    const number = document.getElementById("number").value.trim();
+
+    if (!name || !number) {
+        alert("กรุณากรอกชื่อและเลขที่ / รหัสนักเรียนให้ครบถ้วน");
+        return;
+    }
+
+    count = 0;
+    examStarted = true;
+    questionSet = createRandomQuestionSet();
+
+    document.getElementById("studentName").textContent = name;
+    document.getElementById("studentNumber").textContent = number;
+    document.getElementById("count").textContent = "0";
+
+    document.getElementById("nextButton").disabled = false;
+    document.getElementById("nextButton").textContent =
+        "เริ่มแสดงโจทย์ข้อที่ 1";
+
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("examPage").style.display = "block";
+
+    showInstructions();
+    history.pushState(null, "", location.href);
+}
+
+/* จัดรูปสมการด้วย MathJax */
+function typesetQuestion() {
+    const questionBox = document.getElementById("questionBox");
+
+    if (window.MathJax && typeof MathJax.typesetPromise === "function") {
+        MathJax.typesetClear([questionBox]);
+        MathJax.typesetPromise([questionBox]).catch(function() {});
+    }
+}
+
+/* แสดงโจทย์ข้อถัดไป */
+function generateQuestion() {
+    if (count >= 2) {
+        return;
+    }
+
+    const question = questionSet[count];
+    count++;
+
+    document.getElementById("count").textContent = count;
+    document.getElementById("questionBox").innerHTML = question;
+
+    typesetQuestion();
+
+    const nextButton = document.getElementById("nextButton");
+
+    if (count < 2) {
+        nextButton.textContent = "แสดงโจทย์ข้อถัดไป";
+    } else {
+        nextButton.disabled = true;
+        nextButton.textContent = "ครบ 2 ข้อแล้ว";
+    }
+}
+
+/* สิ้นสุดแบบฝึกหัด */
+function terminateExam(message) {
+    examStarted = false;
+
+    document.body.innerHTML = `
+        <div class="terminated">
+            <h1 style="color:#c62828;">สิ้นสุดการทำแบบฝึกหัด</h1>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+/* ตรวจจับการเปลี่ยนแท็บ */
+document.addEventListener("visibilitychange", function() {
+    if (examStarted && document.hidden) {
+        terminateExam("ตรวจพบการเปลี่ยนแท็บหรือออกจากหน้าต่างแบบฝึกหัด");
+    }
+});
+
+/* ตรวจจับการเปลี่ยนหน้าต่าง */
+window.addEventListener("blur", function() {
+    if (examStarted) {
+        terminateExam("ตรวจพบการเปลี่ยนหน้าต่าง");
+    }
+});
+
+/* ป้องกันการรีเฟรชหน้าเว็บ */
+document.addEventListener("keydown", function(event) {
+    if (!examStarted) {
+        return;
+    }
+
+    const isRefresh =
+        event.key === "F5" ||
+        ((event.ctrlKey || event.metaKey) &&
+        event.key.toLowerCase() === "r");
+
+    if (isRefresh) {
+        event.preventDefault();
+        terminateExam("ตรวจพบการรีเฟรชหน้าเว็บ");
+    }
+});
+
+/* แจ้งเตือนก่อนออกจากหน้า */
+window.addEventListener("beforeunload", function(event) {
+    if (examStarted) {
+        event.preventDefault();
+        event.returnValue = "";
+    }
+});
+
+/* ตรวจจับการกดย้อนกลับ */
+window.addEventListener("popstate", function() {
+    if (examStarted) {
+        terminateExam("ตรวจพบการกดย้อนกลับ");
+    }
+});
+</script>
+
+</body>
+</html>
